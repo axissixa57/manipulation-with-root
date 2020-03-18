@@ -1,0 +1,45 @@
+{
+  "root": {
+    "label": "Root",
+    "children": [
+      {
+        "parent1": {
+          "label": "Parent 1",
+          "children": [
+            {
+              "parent1.1": {
+                "label": "Leaf 1 of Parent 1",
+                "children": []
+              }
+            },
+            {
+              "parent1.2": {
+                "label": "Leaf 2 of Parent 1",
+                "children": []
+              }
+            }
+          ]
+        }
+      },
+      {
+        "parent2": {
+          "label": "Parent 2",
+          "children": [
+            {
+              "parent2.1": {
+                "label": "Leaf 1 of Parent 2",
+                "children": []
+              }
+            },
+            {
+              "parent2.2": {
+                "label": "Leaf 2 of Parent 2",
+                "children": []
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
