@@ -38,7 +38,8 @@ const App = () => {
   const funcs = {
     toggleOpen,
     addChild,
-    makeParent
+    makeParent,
+    setTree,
   };
 
   return (
