@@ -2,7 +2,7 @@ import styled, { createGlobalStyle } from 'styled-components'
 import { Button, Typography } from 'antd'
 import antd from 'antd/dist/antd.css'
 
-const { Title } = Typography;
+const { Title } = Typography
 
 export const GlobalStyle = createGlobalStyle`
     ${antd}
@@ -14,6 +14,13 @@ export const GlobalStyle = createGlobalStyle`
 
     li {
       list-style-type: none;
+    }
+
+    #current {
+      text-shadow: none;
+      background-color: white;
+      color: white;
+      border: none;
     }
 `
 
@@ -29,7 +36,11 @@ export const TreeLine = styled.button`
 `
 
 export const ButtonStyled = styled(Button)`
-  margin-bottom: .3rem;
+  margin-bottom: 0.3rem;
+
+  /* .ant-btn .current {
+    background-color: red;
+  } */
 `
 
 export const TitleStyled = styled(Title)`

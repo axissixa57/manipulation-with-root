@@ -1,8 +1,9 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 
-import {TreeItem, AddItem} from '@/components'
+import { TreeItem, AddItem } from '@/components'
 
 const TreeList = ({ tree, funcs, item }) => {
+  const [dragging, setDragging] = useState(false);
   const dragItem = useRef()
   const dragItemNode = useRef()
 
@@ -13,9 +14,17 @@ const TreeList = ({ tree, funcs, item }) => {
       {newTree.map(child => {
         const key = Object.keys(child)[0]
 
-        return <TreeItem
-          key={key} item={child} funcs={funcs} dragItem={dragItem}
-          dragItemNode={dragItemNode} />
+        return (
+          <TreeItem
+            key={key}
+            item={child}
+            funcs={funcs}
+            dragItem={dragItem}
+            dragItemNode={dragItemNode}
+            dragging={dragging}
+            setDragging={setDragging}
+          />
+        )
       })}
       <AddItem parent={item} funcs={funcs} />
     </ul>

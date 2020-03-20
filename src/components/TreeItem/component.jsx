@@ -4,7 +4,14 @@ import { ButtonStyled } from '@/theme/globalStyle'
 import { TreeList } from '@/components/'
 import { findNested, replaceNested } from '@/helpers'
 
-const TreeItem = ({ item, funcs, dragItem, dragItemNode }) => {
+const TreeItem = ({
+  item,
+  funcs,
+  dragItem,
+  dragItemNode,
+  dragging,
+  setDragging,
+}) => {
   const { toggleOpen, makeParent, setTree } = funcs
 
   const keys = Object.keys(item)
@@ -17,6 +24,8 @@ const TreeItem = ({ item, funcs, dragItem, dragItemNode }) => {
     dragItemNode.current = e.target
     dragItemNode.current.addEventListener('dragend', handleDragEnd)
     dragItem.current = item
+
+    setDragging(true)
   }
 
   const handleDragEnter = (e, targetItem) => {
@@ -64,13 +73,29 @@ const TreeItem = ({ item, funcs, dragItem, dragItemNode }) => {
   }
 
   const handleDragEnd = e => {
+    setDragging(false)
+
     dragItem.current = null
     dragItemNode.current.removeEventListener('dragend', handleDragEnd)
     dragItemNode.current = null
   }
 
+  const getStyles = item => {
+    console.log('getStyles: ', item)
+    console.log('dragItem: ', dragItem)
+    // if (dragItem.current === item) {
+    //   return 'current'
+    // }
+    // return 'dnd-item'
+
+    if (dragItem.current === item && item !== "root") {
+      return 'current'
+    }
+    return 'dnd-item'
+  }
+
   return (
-    <li className="dnd-item">
+    <li>
       {/* <TreeLine
         draggable
         onDragStart={e => handletDragStart(e, parent)}
@@ -87,10 +112,13 @@ const TreeItem = ({ item, funcs, dragItem, dragItemNode }) => {
         onDragEnter={e => handleDragEnter(e, parent)}
         onClick={() => toggleOpen(item)}
         onDoubleClick={() => makeParent(item)}
+        // className={dragging ? getStyles(parent) : 'dnd-item'}
+        id={dragging ? getStyles(parent) : 'dnd-item'}
       >
         {item[parent].label}
+        {/* {item[parent].children && <span>{item[isOpen] ? "[-]" : "[+]"}</span>} */}
       </ButtonStyled>
-      {item[parent].children && (
+      {item[parent].children && ( // && item[isOpen] 
         <TreeList
           item={item[parent]}
           tree={item[parent].children}

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ButtonStyled } from '@/theme/globalStyle'
+import { ButtonStyled, TreeLine } from '@/theme/globalStyle'
 
 const AddItem = ({ parent, funcs }) => {
   return (
