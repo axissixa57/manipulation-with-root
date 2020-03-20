@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const TreeLine = styled.button`
   font-family: Menlo, Consolas, monospace;
@@ -6,7 +6,7 @@ export const TreeLine = styled.button`
   color: inherit;
   border: none;
   padding: 0;
-  font: inherit;
+  font-size: inherit;
   cursor: pointer;
   outline: inherit;
-`;
+`

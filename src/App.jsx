@@ -1,53 +1,64 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
+import { Typography } from 'antd';
 
-import TreeList from "./TreeList";
+import { GlobalStyle, TitleStyled } from '@/theme/globalStyle'
+import { TreeList } from '@/components'
 
-const baseTree = require("./data.json");
+const baseTree = require('./data.json')
+
+const { Title } = Typography;
 
 const App = () => {
-  const [tree, setTree] = useState(baseTree);
+  const [tree, setTree] = useState(baseTree)
 
   const toggleOpen = item => {
-    const newTree = [...tree];
+    item.isOpen = !item.isOpen
 
-    item.isOpen = !item.isOpen;
+    const newTree = Object.assign({}, tree)
 
-    setTree(newTree);
-  };
+    setTree(newTree)
+  }
 
   const makeParent = item => {
-    const newTree = [...tree];
+    console.log(item)
+    const newTree = Object.assign({}, tree)
 
-    item.children = [];
+    item.children = []
 
-    setTree(newTree);
-  };
+    setTree(newTree)
+  }
 
   const addChild = parent => {
-    const newTree = [...tree];
+    const newTree = Object.assign({}, tree)
 
-    if (!parent) {
-      newTree.push({ name: "New Item" });
-    } else {
-      parent.children.push({ name: "New Item" });
-    }
+    console.log(parent)
 
-    setTree(newTree);
-  };
+    parent.children.push({
+      [Date.now()]: {
+        label: `New Item${Date.now()}`,
+        children: [],
+      },
+    })
+
+    setTree(newTree)
+  }
 
   const funcs = {
     toggleOpen,
     addChild,
     makeParent,
     setTree,
-  };
+  }
 
   return (
-    <div className="App">
-      <h1>Manipulations with a tree</h1>
-      <TreeList tree={tree} funcs={funcs} />
-    </div>
-  );
-};
+    <>
+      <GlobalStyle />
+      <div className="App">
+        <TitleStyled>Manipulations with a tree</TitleStyled>
+        <TreeList tree={tree} funcs={funcs} />
+      </div>
+    </>
+  )
+}
 
-export default App;
+export default App
