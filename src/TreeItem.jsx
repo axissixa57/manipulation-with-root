@@ -1,9 +1,9 @@
 import React from "react";
-import omitDeep from "omit-deep-lodash";
+// import omitDeep from "omit-deep-lodash";
 
 import { TreeLine } from "./styles";
 import TreeList from "./TreeList";
-import { findNested } from "./helpers";
+import { findNested, replaceNested } from "./helpers";
 
 const TreeItem = ({ item, funcs, dragItem, dragItemNode }) => {
   const { toggleOpen, makeParent, setTree } = funcs;
@@ -30,16 +30,23 @@ const TreeItem = ({ item, funcs, dragItem, dragItemNode }) => {
       console.log(textElementWillBeReplaced); // кот. надо заменить
       console.log(textElementCurrent); // кот. удерживается для перемещения
 
-      // setTree(oldTree => {
-      //   const { res, obj } = findNested(oldTree, textElement);
+      setTree(oldTree => {
+        const replaced = findNested(oldTree, textElementWillBeReplaced);
+        const current = findNested(oldTree, textElementCurrent);;
+        // const deleted = omitDeep(oldTree, property);
 
-      //   // const deleted = omitDeep(oldTree, property);
+        console.log('replaced:', replaced.res);
+        // console.log('replaced:', JSON.stringify(replaced.obj, null, 4));
+        console.log('current:', current.res);
+        // console.log('current:', JSON.stringify(current.obj, null, 4));
+        const a = replaceNested(oldTree, textElementWillBeReplaced, current.res)
+        const b = replaceNested(oldTree, textElementCurrent, replaced.res)
 
-      //   console.log(res);
-      //   console.log(JSON.stringify(obj, null, 4));
+        // console.log(JSON.stringify(b, null, 4))
 
-      //   return Object.assign({}, obj);
-      // });
+        return Object.assign({}, b);
+        // return replaced.obj;
+      });
 
       // setList(oldList => {
       //   let newList = JSON.parse(JSON.stringify(oldList));
