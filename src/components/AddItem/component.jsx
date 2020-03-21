@@ -6,7 +6,12 @@ const AddItem = ({ parent, funcs }) => {
   return (
     <li>
       {/* <TreeLine onClick={() => funcs.addChild(parent)}>+</TreeLine> */}
-      <ButtonStyled onClick={() => funcs.addChild(parent)}>+</ButtonStyled>
+      <ButtonStyled
+        onClick={() => funcs.addChild(parent)}
+        onDragEnter={e => funcs.handleDragEnter(e, parent)}
+      >
+        +
+      </ButtonStyled>
     </li>
   )
 }

@@ -15,12 +15,20 @@ export const GlobalStyle = createGlobalStyle`
     li {
       list-style-type: none;
     }
+    
+    ul ul ul {
+      border-left: 1px solid black;
+    }
 
     #current {
       text-shadow: none;
-      background-color: white;
-      color: white;
+      background-color: #282c34;
+      color: #282c34;
       border: none;
+    }
+
+    #current + .drag-n-drop {
+      display: none;
     }
 `
 
@@ -37,10 +45,7 @@ export const TreeLine = styled.button`
 
 export const ButtonStyled = styled(Button)`
   margin-bottom: 0.3rem;
-
-  /* .ant-btn .current {
-    background-color: red;
-  } */
+  color: black;
 `
 
 export const TitleStyled = styled(Title)`

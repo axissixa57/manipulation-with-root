@@ -1,15 +1,16 @@
-import React, { useState } from 'react'
-import { Typography } from 'antd';
+import React, { useState, useRef } from 'react'
+import { Typography } from 'antd'
 
 import { GlobalStyle, TitleStyled } from '@/theme/globalStyle'
 import { TreeList } from '@/components'
 
 const baseTree = require('./data.json')
 
-const { Title } = Typography;
-
 const App = () => {
   const [tree, setTree] = useState(baseTree)
+  const dragItem = useRef()
+  const dragItemNode = useRef()
+  const currentObj = useRef()
 
   const toggleOpen = item => {
     item.isOpen = !item.isOpen
@@ -31,8 +32,6 @@ const App = () => {
   const addChild = parent => {
     const newTree = Object.assign({}, tree)
 
-    console.log(parent)
-
     parent.children.push({
       [Date.now()]: {
         label: `New Item${Date.now()}`,
@@ -48,6 +47,9 @@ const App = () => {
     addChild,
     makeParent,
     setTree,
+    dragItem,
+    dragItemNode,
+    currentObj,
   }
 
   return (

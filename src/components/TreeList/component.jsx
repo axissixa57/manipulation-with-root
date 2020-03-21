@@ -3,9 +3,7 @@ import React, { useRef, useState } from 'react'
 import { TreeItem, AddItem } from '@/components'
 
 const TreeList = ({ tree, funcs, item }) => {
-  const [dragging, setDragging] = useState(false);
-  const dragItem = useRef()
-  const dragItemNode = useRef()
+  const [dragging, setDragging] = useState(false)
 
   const newTree = tree.hasOwnProperty('root') ? [tree] : tree
 
@@ -19,14 +17,16 @@ const TreeList = ({ tree, funcs, item }) => {
             key={key}
             item={child}
             funcs={funcs}
-            dragItem={dragItem}
-            dragItemNode={dragItemNode}
             dragging={dragging}
             setDragging={setDragging}
           />
         )
       })}
-      <AddItem parent={item} funcs={funcs} />
+      {newTree[0] &&
+      newTree[0].root &&
+      newTree[0].root.label === 'Root' ? null : (
+        <AddItem parent={item} funcs={funcs} />
+      )}
     </ul>
   )
 }
