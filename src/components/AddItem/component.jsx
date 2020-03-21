@@ -1,6 +1,7 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
-import { ButtonStyled, TreeLine } from '@/theme/globalStyle'
+import { ButtonStyled } from '@/theme/globalStyle'
 
 const AddItem = ({ parent, funcs }) => {
   return (
@@ -14,6 +15,14 @@ const AddItem = ({ parent, funcs }) => {
       </ButtonStyled>
     </li>
   )
+}
+
+AddItem.propTypes = {
+  funcs: PropTypes.shape({
+    addChild: PropTypes.func.isRequired,
+    handleDragEnter: PropTypes.func.isRequired,
+  }).isRequired,
+  parent: PropTypes.object,
 }
 
 export default AddItem

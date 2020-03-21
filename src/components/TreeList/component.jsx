@@ -1,16 +1,19 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 
 import { TreeItem, AddItem } from '@/components'
 
 const TreeList = ({ tree, funcs, item }) => {
   const [dragging, setDragging] = useState(false)
 
-  const newTree = tree.hasOwnProperty('root') ? [tree] : tree
+  const newTree = Object.prototype.hasOwnProperty.call(tree, 'root')
+    ? [tree]
+    : tree
 
   return (
     <ul className="drag-n-drop">
       {newTree.map(child => {
-        const key = Object.keys(child)[0]
+        const [key] = Object.keys(child)
 
         return (
           <TreeItem
@@ -18,17 +21,32 @@ const TreeList = ({ tree, funcs, item }) => {
             item={child}
             funcs={funcs}
             dragging={dragging}
-            setDragging={setDragging}
-          />
+            setDragging={setDragging} />
         )
       })}
-      {newTree[0] &&
-      newTree[0].root &&
-      newTree[0].root.label === 'Root' ? null : (
+      {newTree[0]?.root?.label === 'Root' ? null : (
         <AddItem parent={item} funcs={funcs} />
       )}
     </ul>
   )
+}
+
+TreeList.defaultProps = {
+  item: undefined,
+}
+
+TreeList.propTypes = {
+  tree: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.object),
+    PropTypes.shape({
+      root: PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        children: PropTypes.array.isRequired,
+      }).isRequired,
+    }).isRequired,
+  ]),
+  funcs: PropTypes.object.isRequired,
+  item: PropTypes.object,
 }
 
 export default TreeList

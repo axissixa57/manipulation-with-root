@@ -1,8 +1,6 @@
 export default (root, removable) => {
-  console.log('root:', root)
-  console.log('removable:', removable)
   const arr = [root]
-  const [searchKey] = Object.keys(removable) // parent1.1
+  const [searchKey] = Object.keys(removable)
   let current
 
   while (arr.length > 0) {
@@ -19,14 +17,8 @@ export default (root, removable) => {
         const element = current.children[i]
         const [key] = Object.keys(element)
 
-        // console.log('element:', element)
-        // console.log('key:', key)
-        // console.log('searchKey:', searchKey)
-
         if (key === searchKey) {
-          console.log('found')
-          console.log(current.children)
-          const removed = current.children.splice(i, i + 1)
+          current.children.splice(i, i + 1)
           break
         }
 

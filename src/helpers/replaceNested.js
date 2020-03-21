@@ -5,13 +5,10 @@ export default function replaceNested (obj, searchKey, replaceObj, property) {
   while (arr.length > 0) {
     current = arr.shift()
 
-    const key = Object.keys(current)[0]
+    const [key] = Object.keys(current)
 
     if (current[key] && current[key].label === searchKey && key === property) {
-      // console.log(key)
-      // console.log(property)
       current[key] = replaceObj
-
       break
     }
 

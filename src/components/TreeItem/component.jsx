@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import { ButtonStyled } from '@/theme/globalStyle'
 import { TreeList } from '@/components/'
@@ -15,31 +16,30 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
     toggleOpen,
     makeParent,
     setTree,
-    dragItem,
+    dragItemName,
     dragItemNode,
-    currentObj,
+    dragItemObject,
   } = funcs
 
-  const keys = Object.keys(item)
-  const parent = keys[0]
-  const isOpen = keys[1]
+  const [parent] = Object.keys(item) // const [parent, isOpen]
 
   const handletDragStart = (e, item, obj) => {
     console.log('Starting to drag', item)
 
     dragItemNode.current = e.target
     dragItemNode.current.addEventListener('dragend', handleDragEnd)
-    dragItem.current = item
-    currentObj.current = obj
+    dragItemName.current = item
+    dragItemObject.current = obj
+
+    console.log('!dragItemNode.current: ', dragItemNode.current)
+    console.log('!dragItemName.current: ', dragItemName.current)
+    console.log('!dragItemObject.current: ', dragItemObject.current)
 
     setDragging(true)
   }
 
   const handleDragEnter = (e, targetItem, item) => {
     console.log('Entering a drag target', targetItem)
-
-    // console.log('e.target: ', e.target)
-    // console.log('dragItemNode.current: ', dragItemNode.current)
 
     if (
       dragItemNode.current !== e.target &&
@@ -58,15 +58,13 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
       console.log(textElementCurrent) // кот. удерживается для перемещения
 
       if (textElementWillBeReplaced === '+') {
-        console.log('currentObj.current: ', currentObj.current)
+        console.log('dragItemObject.current: ', dragItemObject.current)
 
         setTree(oldTree => {
-          // const copy = Object.assign({}, currentObj.current)
-          const newTree = findAndDeleteNested(oldTree, currentObj.current)
+          // const copy = Object.assign({}, dragItemObject.current)
+          findAndDeleteNested(oldTree, dragItemObject.current)
 
-          console.log('newTree: ', JSON.stringify(newTree, null, 4))
-
-          targetItem.children.push(currentObj.current)
+          targetItem.children.push(dragItemObject.current)
 
           return Object.assign({}, oldTree)
         })
@@ -88,20 +86,21 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
             )
             return Object.assign({}, newTree)
           } else {
-            const a = replaceNested(
+            replaceNested(
               oldTree,
               textElementWillBeReplaced,
               current.res,
               replaced.property,
             )
-            const b = replaceNested(
+
+            const newTree = replaceNested(
               oldTree,
               textElementCurrent,
               replaced.res,
               current.property,
             )
             // console.log(JSON.stringify(b, null, 4))
-            return Object.assign({}, b)
+            return Object.assign({}, newTree)
           }
         })
       }
@@ -111,21 +110,14 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
   const handleDragEnd = e => {
     setDragging(false)
 
-    dragItem.current = null
+    dragItemName.current = null
     dragItemNode.current.removeEventListener('dragend', handleDragEnd)
     dragItemNode.current = null
-    currentObj.current = null
+    dragItemObject.current = null
   }
 
   const getStyles = item => {
-    // console.log('getStyles: ', item)
-    // console.log('dragItem: ', dragItem)
-    // if (dragItem.current === item) {
-    //   return 'current'
-    // }
-    // return 'dnd-item'
-
-    if (dragItem.current === item && item !== 'root') {
+    if (dragItemName.current === item && item !== 'root') {
       return 'current'
     }
     return 'dnd-item'
@@ -153,11 +145,24 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
           className={dragging ? 'drag-n-drop current' : 'drag-n-drop'}
           item={item[parent]}
           tree={item[parent].children}
-          funcs={funcs}
-        />
+          funcs={funcs} />
       )}
     </li>
   )
+}
+
+TreeItem.propTypes = {
+  funcs: PropTypes.shape({
+    toggleOpen: PropTypes.func.isRequired,
+    makeParent: PropTypes.func.isRequired,
+    setTree: PropTypes.func.isRequired,
+    dragItemName: PropTypes.object.isRequired,
+    dragItemNode: PropTypes.object.isRequired,
+    dragItemObject: PropTypes.object.isRequired,
+  }).isRequired,
+  item: PropTypes.object,
+  dragging: PropTypes.bool.isRequired,
+  setDragging: PropTypes.func.isRequired,
 }
 
 export default TreeItem

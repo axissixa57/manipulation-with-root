@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react'
-import { Typography } from 'antd'
 
 import { GlobalStyle, TitleStyled } from '@/theme/globalStyle'
 import { TreeList } from '@/components'
@@ -8,9 +7,9 @@ const baseTree = require('./data.json')
 
 const App = () => {
   const [tree, setTree] = useState(baseTree)
-  const dragItem = useRef()
   const dragItemNode = useRef()
-  const currentObj = useRef()
+  const dragItemName = useRef()
+  const dragItemObject = useRef()
 
   const toggleOpen = item => {
     item.isOpen = !item.isOpen
@@ -47,9 +46,9 @@ const App = () => {
     addChild,
     makeParent,
     setTree,
-    dragItem,
+    dragItemName,
     dragItemNode,
-    currentObj,
+    dragItemObject,
   }
 
   return (

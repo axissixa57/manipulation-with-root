@@ -1,4 +1,4 @@
-export default function findNested (obj, searchKey) {
+export default (obj, searchKey) => {
   const arr = [obj]
   let res = null
   let current
@@ -7,17 +7,16 @@ export default function findNested (obj, searchKey) {
   while (arr.length > 0) {
     current = arr.shift()
 
-    const key = Object.keys(current)
+    const [key] = Object.keys(current)
 
     if (current[key] && current[key].label === searchKey) {
       res = current[key]
-      property = key[0]
+      property = key
       break
     }
 
     if (!Array.isArray(current.children)) {
       const key = Object.keys(current)
-
       current = current[key]
     }
 
