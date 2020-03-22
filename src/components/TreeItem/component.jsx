@@ -16,12 +16,13 @@ import {
 const TreeItem = ({ item, funcs, dragging, setDragging }) => {
   const {
     setTree,
+    toggleOpen,
     dragItemName,
     dragItemNode,
     dragItemObject,
   } = funcs
 
-  const [parent] = Object.keys(item)
+  const [parent, isOpen] = Object.keys(item)
 
   const handletDragStart = (e, item, obj) => {
     console.log('Starting to drag', item)
@@ -45,8 +46,10 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
     ) {
       console.log('Target is NOT the same as dragged item')
 
-      const textElementWillBeReplaced = e.target.innerText // кот. надо заменить
-      const textElementCurrent = dragItemNode.current.innerText // кот. удерживается для перемещения
+      // кот. надо заменить
+      const [textElementWillBeReplaced] = e.target.innerText.match(/[^[]*/)
+      // кот. удерживается для перемещения
+      const [textElementCurrent] = dragItemNode.current.innerText.match(/[^[]*/)
 
       if (textElementWillBeReplaced === '+') {
         setTree(oldTree => {
@@ -131,11 +134,13 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
         draggable
         onDragStart={e => handletDragStart(e, parent, item)}
         onDragEnter={e => handleDragEnter(e, parent)}
+        onClick={() => toggleOpen(item)}
         id={dragging ? getStyles(parent) : 'dnd-item'}
       >
         {item[parent].label}
+        {item[parent].children && <span>{item[isOpen] ? '[-]' : '[+]'}</span>}
       </ButtonStyled>
-      {item[parent].children && (
+      {item[parent].children && item[isOpen] && (
         <TreeList
           className={dragging ? 'drag-n-drop current' : 'drag-n-drop'}
           item={item[parent]}

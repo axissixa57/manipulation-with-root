@@ -16,7 +16,7 @@ export default (obj, searchKey) => {
     }
 
     if (!Array.isArray(current.children)) {
-      const key = Object.keys(current)
+      const [key] = Object.keys(current)
       current = current[key]
     }
 
