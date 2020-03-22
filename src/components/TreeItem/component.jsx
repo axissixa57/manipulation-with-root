@@ -1,7 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { CloseSquareOutlined } from '@ant-design/icons'
 
 import { ButtonStyled } from '@/theme/globalStyle'
+import { ButtonIconStyled } from './styles'
 import { TreeList } from '@/components/'
 import {
   findNested,
@@ -13,15 +15,13 @@ import {
 
 const TreeItem = ({ item, funcs, dragging, setDragging }) => {
   const {
-    toggleOpen,
-    makeParent,
     setTree,
     dragItemName,
     dragItemNode,
     dragItemObject,
   } = funcs
 
-  const [parent] = Object.keys(item) // const [parent, isOpen]
+  const [parent] = Object.keys(item)
 
   const handletDragStart = (e, item, obj) => {
     console.log('Starting to drag', item)
@@ -30,10 +30,6 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
     dragItemNode.current.addEventListener('dragend', handleDragEnd)
     dragItemName.current = item
     dragItemObject.current = obj
-
-    console.log('!dragItemNode.current: ', dragItemNode.current)
-    console.log('!dragItemName.current: ', dragItemName.current)
-    console.log('!dragItemObject.current: ', dragItemObject.current)
 
     setDragging(true)
   }
@@ -49,19 +45,11 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
     ) {
       console.log('Target is NOT the same as dragged item')
 
-      // const textElementWillBeReplaced = e.target.innerText.match(/[^\[]*/)[0];
-      // const textElementCurrent = dragItemNode.current.innerText.match(/[^\[]*/)[0];
-      const textElementWillBeReplaced = e.target.innerText
-      const textElementCurrent = dragItemNode.current.innerText
-
-      console.log(textElementWillBeReplaced) // кот. надо заменить
-      console.log(textElementCurrent) // кот. удерживается для перемещения
+      const textElementWillBeReplaced = e.target.innerText // кот. надо заменить
+      const textElementCurrent = dragItemNode.current.innerText // кот. удерживается для перемещения
 
       if (textElementWillBeReplaced === '+') {
-        console.log('dragItemObject.current: ', dragItemObject.current)
-
         setTree(oldTree => {
-          // const copy = Object.assign({}, dragItemObject.current)
           findAndDeleteNested(oldTree, dragItemObject.current)
 
           targetItem.children.push(dragItemObject.current)
@@ -72,11 +60,8 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
         setTree(oldTree => {
           const replaced = findNested(oldTree, textElementWillBeReplaced)
           const current = findNested(oldTree, textElementCurrent)
-          console.log('replaced:', replaced.res, replaced.property)
-          console.log('current:', current.res, current.property)
-          // console.log('textElementWillBeReplaced:', textElementWillBeReplaced);
-          // console.log('textElementCurrent:', textElementCurrent);
-          if (hasNested(replaced.res, current.res)) {
+
+          if (hasNested(replaced.res, current.property)) {
             const result = hasAndReplaceNested(replaced.res, current.res)
             const newTree = replaceNested(
               oldTree,
@@ -99,7 +84,7 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
               replaced.res,
               current.property,
             )
-            // console.log(JSON.stringify(b, null, 4))
+
             return Object.assign({}, newTree)
           }
         })
@@ -123,24 +108,34 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
     return 'dnd-item'
   }
 
+  const onHandleDeleteClick = () => {
+    setTree(oldTree => {
+      findAndDeleteNested(oldTree, item)
+      return Object.assign({}, oldTree)
+    })
+  }
+
   funcs = { ...funcs, handleDragEnter }
 
   return (
-    <li>
+    <li style={{ position: 'relative' }}>
+      {item[parent].label !== 'Root' && (
+        <ButtonIconStyled
+          type="link"
+          shape="circle"
+          icon={<CloseSquareOutlined />}
+          onClick={onHandleDeleteClick} />
+      )}
       <ButtonStyled
         type="primary"
         draggable
         onDragStart={e => handletDragStart(e, parent, item)}
         onDragEnter={e => handleDragEnter(e, parent)}
-        onClick={() => toggleOpen(item)}
-        onDoubleClick={() => makeParent(item)}
-        // className={dragging ? getStyles(parent) : 'dnd-item'}
         id={dragging ? getStyles(parent) : 'dnd-item'}
       >
         {item[parent].label}
-        {/* {item[parent].children && <span>{item[isOpen] ? "[-]" : "[+]"}</span>} */}
       </ButtonStyled>
-      {item[parent].children && ( // && item[isOpen]
+      {item[parent].children && (
         <TreeList
           className={dragging ? 'drag-n-drop current' : 'drag-n-drop'}
           item={item[parent]}
@@ -154,7 +149,6 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
 TreeItem.propTypes = {
   funcs: PropTypes.shape({
     toggleOpen: PropTypes.func.isRequired,
-    makeParent: PropTypes.func.isRequired,
     setTree: PropTypes.func.isRequired,
     dragItemName: PropTypes.object.isRequired,
     dragItemNode: PropTypes.object.isRequired,

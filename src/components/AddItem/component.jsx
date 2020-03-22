@@ -6,7 +6,6 @@ import { ButtonStyled } from '@/theme/globalStyle'
 const AddItem = ({ parent, funcs }) => {
   return (
     <li>
-      {/* <TreeLine onClick={() => funcs.addChild(parent)}>+</TreeLine> */}
       <ButtonStyled
         onClick={() => funcs.addChild(parent)}
         onDragEnter={e => funcs.handleDragEnter(e, parent)}

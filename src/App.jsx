@@ -19,15 +19,6 @@ const App = () => {
     setTree(newTree)
   }
 
-  const makeParent = item => {
-    console.log(item)
-    const newTree = Object.assign({}, tree)
-
-    item.children = []
-
-    setTree(newTree)
-  }
-
   const addChild = parent => {
     const newTree = Object.assign({}, tree)
 
@@ -44,7 +35,6 @@ const App = () => {
   const funcs = {
     toggleOpen,
     addChild,
-    makeParent,
     setTree,
     dragItemName,
     dragItemNode,
