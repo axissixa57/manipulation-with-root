@@ -1,5 +1,7 @@
 ## Description
 
+- Drag and drop is implemented without the use of third-party libraries
+
 Features:
 1) Drag and drop: 
 - swaps if elements overlap each other ( for example, elements on the same level or child elements of one branch on another)
