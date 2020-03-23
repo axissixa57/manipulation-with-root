@@ -8,9 +8,6 @@ Features:
 3) Deleting nodes
 4) Collapse / expand branches
 
-Bugs:
-- It may not work correctly if you add new nodes
-
 <hr>
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

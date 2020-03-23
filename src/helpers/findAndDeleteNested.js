@@ -18,7 +18,7 @@ export default (root, removable) => {
         const [key] = Object.keys(element)
 
         if (key === searchKey) {
-          current.children.splice(i, i + 1)
+          current.children.splice(i, 1)
           break
         }
 
