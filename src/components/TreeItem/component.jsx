@@ -53,16 +53,25 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
 
       if (textElementWillBeReplaced === '+') {
         setTree(oldTree => {
-          findAndDeleteNested(oldTree, dragItemObject.current)
+          const { property: keyTargetItem } = findNested(oldTree, targetItem.label)
 
-          targetItem.children.push(dragItemObject.current)
+          if (hasNested(dragItemObject.current, keyTargetItem)) {
+            return Object.assign({}, oldTree)
+          } else {
+            findAndDeleteNested(oldTree, dragItemObject.current)
 
-          return Object.assign({}, oldTree)
+            targetItem.children.push(dragItemObject.current)
+
+            return Object.assign({}, oldTree)
+          }
         })
       } else {
         setTree(oldTree => {
           const replaced = findNested(oldTree, textElementWillBeReplaced)
           const current = findNested(oldTree, textElementCurrent)
+
+          console.log('replaced: ', replaced)
+          console.log('current: ', current)
 
           if (hasNested(replaced.res, current.property)) {
             const result = hasAndReplaceNested(replaced.res, current.res)
@@ -74,19 +83,23 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
             )
             return Object.assign({}, newTree)
           } else {
-            replaceNested(
-              oldTree,
-              textElementWillBeReplaced,
-              current.res,
-              replaced.property,
-            )
+            let newTree = oldTree
 
-            const newTree = replaceNested(
-              oldTree,
-              textElementCurrent,
-              replaced.res,
-              current.property,
-            )
+            if(!hasNested(current.res, replaced.property)) {
+              replaceNested(
+                oldTree,
+                textElementWillBeReplaced,
+                current.res,
+                replaced.property,
+              )
+  
+              newTree = replaceNested(
+                oldTree,
+                textElementCurrent,
+                replaced.res,
+                current.property,
+              )
+            }
 
             return Object.assign({}, newTree)
           }

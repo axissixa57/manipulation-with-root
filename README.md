@@ -1,15 +1,15 @@
-## Описание
+## Description
 
-Фичи:
+Features:
 1) Drag and drop: 
-- меняет местами если элементы накладываюся друг на друга (например, элементы на одному уровне или дочерние элементы одной ветки с другой)
-- меняет местами если перетащить на "+"
-2) Добавление новых узлов
-3) Удаление узлов
-4) Свернуть/развернуть ветки
+- swaps if elements overlap each other ( for example, elements on the same level or child elements of one branch on another)
+- swaps if you drag to" +"
+2) Adding new nodes
+3) Deleting nodes
+4) Collapse / expand branches
 
-Баг:
-- если элемент остаётся в режиме "перетаскивания" и он имеет внутри себя дочерние элементы, то при перетаскивании на них либо на "+", находящийся внутри, произойдёт непредвиденное (если это дочерний элемент, то они поменяются местами, если это "+", то удалится вовсе, также вкладка может зависнуть).
+Bugs:
+- It may not work correctly if you add new nodes
 
 <hr>
 
