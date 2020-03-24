@@ -1,29 +1,13 @@
-export default function replaceNested (obj, searchKey, replaceObj, property) {
-  const arr = [obj]
-  let current
+const replaceNested = (tree, searchProperty, replacementObj) => {
+  const [firstKey] = Object.keys(tree)
 
-  while (arr.length > 0) {
-    current = arr.shift()
+  tree[firstKey].children.forEach(branch => {
+    const [branchKey] = Object.keys(branch)
 
-    const [key] = Object.keys(current)
-
-    if (current[key] && current[key].label === searchKey && key === property) {
-      current[key] = replaceObj
-      break
-    }
-
-    if (!Array.isArray(current.children)) {
-      const [key] = Object.keys(current)
-
-      current = current[key]
-    }
-
-    if (current && current.children.length > 0) {
-      for (let i = 0; i < current.children.length; i++) {
-        arr.push(current.children[i])
-      }
-    }
-  }
-
-  return obj
+    branchKey === searchProperty
+      ? (branch[branchKey] = replacementObj)
+      : replaceNested(branch, searchProperty, replacementObj)
+  })
 }
+
+export default replaceNested

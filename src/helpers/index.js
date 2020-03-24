@@ -1,5 +1,5 @@
-export { default as findNested } from './findNested'
+export { default as findNestedByLabelName } from './findNestedByLabelName'
 export { default as replaceNested } from './replaceNested'
 export { default as hasNested } from './hasNested'
 export { default as hasAndReplaceNested } from './hasAndReplaceNested'
-export { default as findAndDeleteNested } from './findAndDeleteNested'
+export { default as deleteNested } from './deleteNested'

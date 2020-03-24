@@ -6,11 +6,11 @@ import { ButtonStyled } from '@/theme/globalStyle'
 import { ButtonIconStyled } from './styles'
 import { TreeList } from '@/components/'
 import {
-  findNested,
+  findNestedByLabelName,
   replaceNested,
   hasNested,
   hasAndReplaceNested,
-  findAndDeleteNested,
+  deleteNested,
 } from '@/helpers'
 
 const TreeItem = ({ item, funcs, dragging, setDragging }) => {
@@ -53,12 +53,15 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
 
       if (textElementWillBeReplaced === '+') {
         setTree(oldTree => {
-          const { property: keyTargetItem } = findNested(oldTree, targetItem.label)
+          const { property: keyTargetItem } = findNestedByLabelName(
+            oldTree,
+            targetItem.label,
+          )
 
           if (hasNested(dragItemObject.current, keyTargetItem)) {
             return Object.assign({}, oldTree)
           } else {
-            findAndDeleteNested(oldTree, dragItemObject.current)
+            deleteNested(oldTree, dragItemObject.current)
 
             targetItem.children.push(dragItemObject.current)
 
@@ -67,41 +70,27 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
         })
       } else {
         setTree(oldTree => {
-          const replaced = findNested(oldTree, textElementWillBeReplaced)
-          const current = findNested(oldTree, textElementCurrent)
+          const replaced = findNestedByLabelName(
+            oldTree,
+            textElementWillBeReplaced,
+          )
+          const current = findNestedByLabelName(oldTree, textElementCurrent)
 
           console.log('replaced: ', replaced)
           console.log('current: ', current)
 
-          if (hasNested(replaced.res, current.property)) {
-            const result = hasAndReplaceNested(replaced.res, current.res)
-            const newTree = replaceNested(
-              oldTree,
-              textElementWillBeReplaced,
-              result,
-              replaced.property,
-            )
-            return Object.assign({}, newTree)
+          if (hasNested(replaced.object, current.property)) {
+            const result = hasAndReplaceNested(replaced, current)
+            replaceNested(oldTree, replaced.property, result)
+            return Object.assign({}, oldTree)
           } else {
-            let newTree = oldTree
+            if (!hasNested(current.object, replaced.property)) {
+              replaceNested(oldTree, replaced.property, current.object)
 
-            if(!hasNested(current.res, replaced.property)) {
-              replaceNested(
-                oldTree,
-                textElementWillBeReplaced,
-                current.res,
-                replaced.property,
-              )
-  
-              newTree = replaceNested(
-                oldTree,
-                textElementCurrent,
-                replaced.res,
-                current.property,
-              )
+              replaceNested(oldTree, current.property, replaced.object)
             }
 
-            return Object.assign({}, newTree)
+            return Object.assign({}, oldTree)
           }
         })
       }
@@ -126,7 +115,8 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
 
   const onHandleDeleteClick = () => {
     setTree(oldTree => {
-      findAndDeleteNested(oldTree, item)
+      debugger
+      deleteNested(oldTree, item)
       return Object.assign({}, oldTree)
     })
   }
@@ -140,7 +130,8 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
           type="link"
           shape="circle"
           icon={<CloseSquareOutlined />}
-          onClick={onHandleDeleteClick} />
+          onClick={onHandleDeleteClick}
+        />
       )}
       <ButtonStyled
         type="primary"
@@ -158,7 +149,8 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
           className={dragging ? 'drag-n-drop current' : 'drag-n-drop'}
           item={item[parent]}
           tree={item[parent].children}
-          funcs={funcs} />
+          funcs={funcs}
+        />
       )}
     </li>
   )

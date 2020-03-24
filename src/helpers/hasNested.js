@@ -1,30 +1,23 @@
 export default (obj, property) => {
-  const arr = [obj]
-  let current
   let result = false
+  let current
 
-  while (arr.length > 0) {
-    current = arr.shift()
+  const hasNested = (obj, property) => {
+    current = obj
 
     const [key] = Object.keys(current)
 
-    if (current[key] && key === property) {
-      result = true
-      break
-    }
+    key === property && (result = true)
 
     if (!Array.isArray(current.children)) {
       const [key] = Object.keys(current)
-
       current = current[key]
     }
 
-    if (current && current.children.length > 0) {
-      for (let i = 0; i < current.children.length; i++) {
-        arr.push(current.children[i])
-      }
-    }
+    current.children.forEach(branch => hasNested(branch, property))
+
+    return result
   }
 
-  return result
+  return hasNested(obj, property)
 }
