@@ -11,31 +11,7 @@ const App = () => {
   const dragItemName = useRef()
   const dragItemObject = useRef()
 
-  const toggleOpen = item => {
-    item.isOpen = !item.isOpen
-
-    const newTree = Object.assign({}, tree)
-
-    setTree(newTree)
-  }
-
-  const addChild = parent => {
-    const newTree = Object.assign({}, tree)
-
-    parent.children.push({
-      [Date.now()]: {
-        label: `New Item${Date.now()}`,
-        children: [],
-      },
-    })
-
-    setTree(newTree)
-  }
-
-  const funcs = {
-    toggleOpen,
-    addChild,
-    setTree,
+  const refs = {
     dragItemName,
     dragItemNode,
     dragItemObject,
@@ -46,7 +22,7 @@ const App = () => {
       <GlobalStyle />
       <div className="App">
         <TitleStyled>Manipulations with a tree</TitleStyled>
-        <TreeList tree={tree} funcs={funcs} />
+        <TreeList tree={tree} setTree={setTree} refs={refs} />
       </div>
     </>
   )

@@ -13,14 +13,12 @@ import {
   deleteNested,
 } from '@/helpers'
 
-const TreeItem = ({ item, funcs, dragging, setDragging }) => {
+const TreeItem = ({ item, refs, setTree, dragging, setDragging }) => {
   const {
-    setTree,
-    toggleOpen,
     dragItemName,
     dragItemNode,
     dragItemObject,
-  } = funcs
+  } = refs
 
   const [parent, isOpen] = Object.keys(item)
 
@@ -46,9 +44,8 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
     ) {
       console.log('Target is NOT the same as dragged item')
 
-      // кот. надо заменить
       const [textElementWillBeReplaced] = e.target.innerText.match(/[^[]*/)
-      // кот. удерживается для перемещения
+
       const [textElementCurrent] = dragItemNode.current.innerText.match(/[^[]*/)
 
       if (textElementWillBeReplaced === '+') {
@@ -115,13 +112,15 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
 
   const onHandleDeleteClick = () => {
     setTree(oldTree => {
-      debugger
       deleteNested(oldTree, item)
       return Object.assign({}, oldTree)
     })
   }
 
-  funcs = { ...funcs, handleDragEnter }
+  const toggleOpen = item => {
+    item.isOpen = !item.isOpen
+    setTree(oldTree => Object.assign({}, oldTree))
+  }
 
   return (
     <li style={{ position: 'relative' }}>
@@ -130,8 +129,7 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
           type="link"
           shape="circle"
           icon={<CloseSquareOutlined />}
-          onClick={onHandleDeleteClick}
-        />
+          onClick={onHandleDeleteClick} />
       )}
       <ButtonStyled
         type="primary"
@@ -149,17 +147,16 @@ const TreeItem = ({ item, funcs, dragging, setDragging }) => {
           className={dragging ? 'drag-n-drop current' : 'drag-n-drop'}
           item={item[parent]}
           tree={item[parent].children}
-          funcs={funcs}
-        />
+          setTree={setTree}
+          refs={refs}
+          handleDragEnter={handleDragEnter} />
       )}
     </li>
   )
 }
 
 TreeItem.propTypes = {
-  funcs: PropTypes.shape({
-    toggleOpen: PropTypes.func.isRequired,
-    setTree: PropTypes.func.isRequired,
+  refs: PropTypes.shape({
     dragItemName: PropTypes.object.isRequired,
     dragItemNode: PropTypes.object.isRequired,
     dragItemObject: PropTypes.object.isRequired,
@@ -167,6 +164,7 @@ TreeItem.propTypes = {
   item: PropTypes.object,
   dragging: PropTypes.bool.isRequired,
   setDragging: PropTypes.func.isRequired,
+  setTree: PropTypes.func.isRequired,
 }
 
 export default TreeItem

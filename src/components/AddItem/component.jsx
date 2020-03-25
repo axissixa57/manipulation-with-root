@@ -1,14 +1,32 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import PropTypes from 'prop-types'
 
 import { ButtonStyled } from '@/theme/globalStyle'
 
-const AddItem = ({ parent, funcs }) => {
+const AddItem = ({ parent, setTree, handleDragEnter }) => {
+  const addChild = parent => {
+    setTree(oldTree => {
+      const newTree = Object.assign({}, oldTree)
+
+      parent.children.push({
+        [Date.now()]: {
+          label: `New Item${Date.now()}`,
+          children: [],
+        },
+      })
+
+      return newTree
+    })
+  }
+
+  const handleOnClick = useCallback(() => addChild(parent), [parent])
+  const handleOnDragEnter = useCallback(e => handleDragEnter(e, parent), [parent])
+
   return (
     <li>
       <ButtonStyled
-        onClick={() => funcs.addChild(parent)}
-        onDragEnter={e => funcs.handleDragEnter(e, parent)}
+        onClick={handleOnClick}
+        onDragEnter={handleOnDragEnter}
       >
         +
       </ButtonStyled>
@@ -17,11 +35,9 @@ const AddItem = ({ parent, funcs }) => {
 }
 
 AddItem.propTypes = {
-  funcs: PropTypes.shape({
-    addChild: PropTypes.func.isRequired,
-    handleDragEnter: PropTypes.func.isRequired,
-  }).isRequired,
   parent: PropTypes.object,
+  setTree: PropTypes.func.isRequired,
+  handleDragEnter: PropTypes.func.isRequired,
 }
 
 export default AddItem

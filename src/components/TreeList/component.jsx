@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import { TreeItem, AddItem } from '@/components'
 
-const TreeList = ({ tree, funcs, item }) => {
+const TreeList = ({ tree, setTree, refs, item, handleDragEnter }) => {
   const [dragging, setDragging] = useState(false)
 
   const newTree = Object.prototype.hasOwnProperty.call(tree, 'root')
@@ -19,13 +19,14 @@ const TreeList = ({ tree, funcs, item }) => {
           <TreeItem
             key={key}
             item={child}
-            funcs={funcs}
+            refs={refs}
+            setTree={setTree}
             dragging={dragging}
             setDragging={setDragging} />
         )
       })}
       {newTree[0]?.root?.label === 'Root' ? null : (
-        <AddItem parent={item} funcs={funcs} />
+        <AddItem parent={item} refs={refs} setTree={setTree} handleDragEnter={handleDragEnter} />
       )}
     </ul>
   )
@@ -33,6 +34,7 @@ const TreeList = ({ tree, funcs, item }) => {
 
 TreeList.defaultProps = {
   item: undefined,
+  handleDragEnter: undefined,
 }
 
 TreeList.propTypes = {
@@ -45,8 +47,10 @@ TreeList.propTypes = {
       }).isRequired,
     }).isRequired,
   ]),
-  funcs: PropTypes.object.isRequired,
+  refs: PropTypes.object.isRequired,
   item: PropTypes.object,
+  setTree: PropTypes.func.isRequired,
+  handleDragEnter: PropTypes.func,
 }
 
 export default TreeList
