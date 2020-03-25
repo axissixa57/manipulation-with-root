@@ -8,11 +8,11 @@ const baseTree = require('./data.json')
 const App = () => {
   const [tree, setTree] = useState(baseTree)
   const dragItemNode = useRef()
-  const dragItemName = useRef()
+  const dragItem = useRef()
   const dragItemObject = useRef()
 
   const refs = {
-    dragItemName,
+    dragItem,
     dragItemNode,
     dragItemObject,
   }
