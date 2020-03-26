@@ -1,4 +1,4 @@
-const replaceNested = (tree, searchProperty, replacementObj) => {
+const replaceBranchOfTree = (tree, searchProperty, replacementObj) => {
   const [firstKey] = Object.keys(tree)
 
   tree[firstKey].children.forEach(branch => {
@@ -6,8 +6,8 @@ const replaceNested = (tree, searchProperty, replacementObj) => {
 
     branchKey === searchProperty
       ? (branch[branchKey] = replacementObj)
-      : replaceNested(branch, searchProperty, replacementObj)
+      : replaceBranchOfTree(branch, searchProperty, replacementObj)
   })
 }
 
-export default replaceNested
+export default replaceBranchOfTree

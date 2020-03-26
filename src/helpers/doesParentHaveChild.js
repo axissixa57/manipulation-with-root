@@ -2,7 +2,7 @@ export default (obj, property) => {
   let result = false
   let current
 
-  const hasNested = (obj, property) => {
+  const doesParentHaveChild = (obj, property) => {
     current = obj
 
     const [key] = Object.keys(current)
@@ -14,10 +14,10 @@ export default (obj, property) => {
       current = current[key]
     }
 
-    current.children.forEach(branch => hasNested(branch, property))
+    current.children.forEach(branch => doesParentHaveChild(branch, property))
 
     return result
   }
 
-  return hasNested(obj, property)
+  return doesParentHaveChild(obj, property)
 }

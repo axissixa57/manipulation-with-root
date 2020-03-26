@@ -6,19 +6,15 @@ import { ButtonStyled } from '@/theme/globalStyle'
 import { ButtonIconStyled } from './styles'
 import { TreeList } from '@/components/'
 import {
-  findNestedByKeyName,
-  replaceNested,
-  hasNested,
-  hasAndReplaceNested,
-  deleteNested,
+  findBrachOfTreeByKeyName,
+  replaceBranchOfTree,
+  doesParentHaveChild,
+  addChildToEndOfParentArray,
+  deleteChildOfTree,
 } from '@/helpers'
 
 const TreeItem = ({ item, refs, setTree, dragging, setDragging }) => {
-  const {
-    dragItem,
-    dragItemNode,
-    dragItemObject,
-  } = refs
+  const { dragItem, dragItemNode, dragItemObject } = refs
 
   const [parentKey, isOpen] = Object.keys(item)
 
@@ -47,47 +43,52 @@ const TreeItem = ({ item, refs, setTree, dragging, setDragging }) => {
 
       if (textElementWillBeReplaced === '+') {
         setTree(oldTree => {
-          const { property: keyTargetItem } = findNestedByKeyName(
-            oldTree,
-            parentKey,
-          )
+          const { property } = findBrachOfTreeByKeyName(oldTree, parentKey)
 
-          if (hasNested(dragItemObject.current, keyTargetItem)) {
-            return Object.assign({}, oldTree)
-          } else {
-            deleteNested(oldTree, dragItemObject.current)
+          // if the parent element wants to replace the child element ("+")
+          if (!doesParentHaveChild(dragItemObject.current, property)) {
+            deleteChildOfTree(oldTree, dragItemObject.current)
+
             targetItem.children.push(dragItemObject.current)
-
-            return Object.assign({}, oldTree)
           }
+
+          return Object.assign({}, oldTree)
         })
       } else {
         setTree(oldTree => {
-          console.log('targetItem: ', targetItem) // replaceable 
-          console.log('dragItem.current: ', dragItem.current) // current
+          const replaceableItem = findBrachOfTreeByKeyName(oldTree, targetItem)
+          const currentItem = findBrachOfTreeByKeyName(oldTree, dragItem.current)
 
-          const replaceableItem = findNestedByKeyName(
-            oldTree,
-            targetItem,
-          )
+          // if the child element wants to replace the parent element
+          if (doesParentHaveChild(replaceableItem.object, currentItem.property)) {
+            const result = addChildToEndOfParentArray(
+              replaceableItem,
+              currentItem,
+            )
 
-          const currentItem = findNestedByKeyName(oldTree, dragItem.current)
-
-          console.log('replaceableItem: ', replaceableItem)
-          console.log('currentItem: ', currentItem)
-
-          if (hasNested(replaceableItem.object, currentItem.property)) {
-            const result = hasAndReplaceNested(replaceableItem, currentItem)
-            replaceNested(oldTree, replaceableItem.property, result)
-            return Object.assign({}, oldTree)
-          } else {
-            if (!hasNested(currentItem.object, replaceableItem.property)) {
-              replaceNested(oldTree, replaceableItem.property, currentItem.object)
-              replaceNested(oldTree, currentItem.property, replaceableItem.object)
-            }
+            replaceBranchOfTree(oldTree, replaceableItem.property, result)
 
             return Object.assign({}, oldTree)
           }
+
+          // if the parent element wants to replace the child element
+          if (!doesParentHaveChild(currentItem.object, replaceableItem.property)) {
+            replaceBranchOfTree(
+              oldTree,
+              replaceableItem.property,
+              currentItem.object,
+            )
+
+            replaceBranchOfTree(
+              oldTree,
+              currentItem.property,
+              replaceableItem.object,
+            )
+
+            return Object.assign({}, oldTree)
+          }
+
+          return Object.assign({}, oldTree)
         })
       }
     }
@@ -111,13 +112,15 @@ const TreeItem = ({ item, refs, setTree, dragging, setDragging }) => {
 
   const onHandleDeleteClick = () => {
     setTree(oldTree => {
-      deleteNested(oldTree, item)
+      deleteChildOfTree(oldTree, item)
+
       return Object.assign({}, oldTree)
     })
   }
 
   const toggleOpen = item => {
     item.isOpen = !item.isOpen
+    
     setTree(oldTree => Object.assign({}, oldTree))
   }
 
@@ -128,7 +131,8 @@ const TreeItem = ({ item, refs, setTree, dragging, setDragging }) => {
           type="link"
           shape="circle"
           icon={<CloseSquareOutlined />}
-          onClick={onHandleDeleteClick} />
+          onClick={onHandleDeleteClick}
+        />
       )}
       <ButtonStyled
         type="primary"
@@ -139,7 +143,9 @@ const TreeItem = ({ item, refs, setTree, dragging, setDragging }) => {
         id={dragging ? getStyles(parentKey) : 'dnd-item'}
       >
         {item[parentKey].label}
-        {item[parentKey].children && <span>{item[isOpen] ? '[-]' : '[+]'}</span>}
+        {item[parentKey].children && (
+          <span>{item[isOpen] ? '[-]' : '[+]'}</span>
+        )}
       </ButtonStyled>
       {item[parentKey].children && item[isOpen] && (
         <TreeList
@@ -148,7 +154,8 @@ const TreeItem = ({ item, refs, setTree, dragging, setDragging }) => {
           tree={item[parentKey].children}
           setTree={setTree}
           refs={refs}
-          handleDragEnter={handleDragEnter} />
+          handleDragEnter={handleDragEnter}
+        />
       )}
     </li>
   )

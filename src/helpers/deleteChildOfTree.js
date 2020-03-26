@@ -1,4 +1,4 @@
-const deleteNested = (tree, removable) => {
+const deleteChildOfTree = (tree, removable) => {
   const [firstKey] = Object.keys(tree)
   const [removableKey] = Object.keys(removable)
 
@@ -7,8 +7,8 @@ const deleteNested = (tree, removable) => {
 
     branchKey === removableKey
       ? tree[firstKey].children.splice(i, 1)
-      : deleteNested(branch, removable)
+      : deleteChildOfTree(branch, removable)
   })
 }
 
-export default deleteNested
+export default deleteChildOfTree
