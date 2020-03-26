@@ -10,7 +10,7 @@ const AddItem = ({ parent, setTree, handleDragEnter }) => {
 
       parent.children.push({
         [Date.now()]: {
-          label: `New Item${Date.now()}`,
+          label: 'New Item',
           children: [],
         },
       })

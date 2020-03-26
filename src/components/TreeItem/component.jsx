@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { CloseSquareOutlined } from '@ant-design/icons'
 
 import { ButtonStyled } from '@/theme/globalStyle'
-import { ButtonIconStyled } from './styles'
+import { ButtonIconStyled, EditInputStyled } from './styles'
 import { TreeList } from '@/components/'
 import {
   findBrachOfTreeByKeyName,
@@ -15,10 +15,12 @@ import {
 
 const TreeItem = ({ item, refs, setTree, dragging, setDragging }) => {
   const { dragItem, dragItemNode, dragItemObject } = refs
-
   const [parentKey, isOpen] = Object.keys(item)
 
-  const handletDragStart = (e, item, obj) => {
+  const [pressed, setPressed] = useState(false)
+  const [inputValue, setInputValue] = useState(item[parentKey].label)
+
+  const handleDragStart = (e, item, obj) => {
     console.log('Starting to drag', item)
 
     dragItemNode.current = e.target
@@ -57,10 +59,15 @@ const TreeItem = ({ item, refs, setTree, dragging, setDragging }) => {
       } else {
         setTree(oldTree => {
           const replaceableItem = findBrachOfTreeByKeyName(oldTree, targetItem)
-          const currentItem = findBrachOfTreeByKeyName(oldTree, dragItem.current)
+          const currentItem = findBrachOfTreeByKeyName(
+            oldTree,
+            dragItem.current,
+          )
 
           // if the child element wants to replace the parent element
-          if (doesParentHaveChild(replaceableItem.object, currentItem.property)) {
+          if (
+            doesParentHaveChild(replaceableItem.object, currentItem.property)
+          ) {
             const result = addChildToEndOfParentArray(
               replaceableItem,
               currentItem,
@@ -72,7 +79,9 @@ const TreeItem = ({ item, refs, setTree, dragging, setDragging }) => {
           }
 
           // if the parent element wants to replace the child element
-          if (!doesParentHaveChild(currentItem.object, replaceableItem.property)) {
+          if (
+            !doesParentHaveChild(currentItem.object, replaceableItem.property)
+          ) {
             replaceBranchOfTree(
               oldTree,
               replaceableItem.property,
@@ -118,11 +127,42 @@ const TreeItem = ({ item, refs, setTree, dragging, setDragging }) => {
     })
   }
 
-  const toggleOpen = item => {
+  const onHandleKeyDownButton = e => {
+    if (e.key === 'F2') {
+      setPressed(true)
+    }
+  }
+
+  const onHandleKeyDownInput = (e, item) => {
+    if (e.key === 'Enter') {
+      setTree(oldTree => {
+        item[parentKey].label = inputValue
+        return Object.assign({}, oldTree)
+      })
+
+      setPressed(false)
+    }
+  }
+
+  const toggleOpen = (e, item) => {
     item.isOpen = !item.isOpen
-    
+
     setTree(oldTree => Object.assign({}, oldTree))
   }
+
+  const onHandleChange = e => {
+    setInputValue(e.target.value)
+  }
+
+  const handleDragStartMemoized = useCallback(
+    e => handleDragStart(e, parentKey, item),
+    [item],
+  )
+  const handleDragEnterMemoized = useCallback(
+    e => handleDragEnter(e, parentKey),
+    [parentKey],
+  )
+  const toggleOpenMemoized = useCallback(e => toggleOpen(e, item), [item])
 
   return (
     <li style={{ position: 'relative' }}>
@@ -137,12 +177,22 @@ const TreeItem = ({ item, refs, setTree, dragging, setDragging }) => {
       <ButtonStyled
         type="primary"
         draggable
-        onDragStart={e => handletDragStart(e, parentKey, item)}
-        onDragEnter={e => handleDragEnter(e, parentKey)}
-        onClick={() => toggleOpen(item)}
+        onDragStart={handleDragStartMemoized}
+        onDragEnter={handleDragEnterMemoized}
+        onClick={toggleOpenMemoized}
+        onKeyDown={e => onHandleKeyDownButton(e)}
         id={dragging ? getStyles(parentKey) : 'dnd-item'}
       >
-        {item[parentKey].label}
+        {pressed ? (
+          <EditInputStyled
+            size="small"
+            value={inputValue}
+            onChange={e => onHandleChange(e)}
+            onKeyDown={e => onHandleKeyDownInput(e, item)}
+          />
+        ) : (
+          item[parentKey].label
+        )}
         {item[parentKey].children && (
           <span>{item[isOpen] ? '[-]' : '[+]'}</span>
         )}
